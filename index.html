@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rhiwick — Data Scientist & Maker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0c0f;
+      --bg2: #0f1217;
+      --bg3: #141820;
+      --card: #111418;
+      --border: #1e2530;
+      --accent: #00d4ff;
+      --accent2: #39ff14;
+      --accent3: #ff6b2b;
+      --text: #c8d8e8;
+      --muted: #556070;
+      --white: #eaf2ff;
+      --font-mono: 'Share Tech Mono', monospace;
+      --font-body: 'JetBrains Mono', monospace;
+      --font-display: 'Syne', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* SCANLINE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,212,255,0.015) 2px,
+        rgba(0,212,255,0.015) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* NOISE TEXTURE */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.3;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(10,12,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+    }
+
+    .nav-logo span { color: var(--accent2); }
+
+    nav ul {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    nav a {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--accent); }
+
+    /* HERO */
+    #home {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 8rem 4rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 70% 60% at 60% 50%, black 30%, transparent 100%);
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 20%; right: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-glow2 {
+      position: absolute;
+      bottom: -5%; left: 30%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(57,255,20,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 800px; }
+
+    .hero-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent2);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 30px; height: 1px;
+      background: var(--accent2);
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    h1 .line2 {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--accent);
+      display: block;
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 1.5rem 0 2.5rem;
+      line-height: 1.8;
+    }
+
+    .hero-sub strong { color: var(--accent); font-weight: 400; }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.8rem;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.25s;
+      position: relative;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 600;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+
+    .btn-primary:hover {
+      background: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(0,212,255,0.4);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+
+    .btn-ghost:hover {
+      background: rgba(0,212,255,0.08);
+      box-shadow: 0 0 20px rgba(0,212,255,0.2);
+    }
+
+    .hero-stats {
+      position: absolute;
+      right: 4rem;
+      bottom: 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      z-index: 1;
+    }
+
+    .stat {
+      text-align: right;
+    }
+
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    /* SECTION BASE */
+    section { padding: 7rem 4rem; }
+
+    .section-header {
+      margin-bottom: 4rem;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent2);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.1;
+    }
+
+    h2 .accent { color: var(--accent); }
+
+    .section-line {
+      width: 60px; height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      margin-top: 1rem;
+    }
+
+    /* PORTFOLIO */
+    #portfolio { background: var(--bg2); }
+
+    .portfolio-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 3rem;
+      border: 1px solid var(--border);
+      width: fit-content;
+    }
+
+    .tab-btn {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.75rem 2rem;
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 600;
+    }
+
+    .tab-btn:not(.active):hover { color: var(--accent); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      position: relative;
+      transition: all 0.3s;
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 0; height: 0;
+      border-left: 16px solid transparent;
+      border-top: 16px solid var(--accent);
+      opacity: 0.4;
+    }
+
+    .project-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0,212,255,0.1);
+    }
+
+    .project-card:hover::before { opacity: 1; }
+
+    .project-type {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .project-card[data-type="hardware"] .project-type { color: var(--accent3); }
+
+    .project-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+
+    .project-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 0.25rem 0.6rem;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .project-card:hover .tag { border-color: rgba(0,212,255,0.3); }
+
+    [data-type="hardware"]:hover { border-color: var(--accent3); box-shadow: 0 8px 30px rgba(255,107,43,0.1); }
+    [data-type="hardware"]::before { border-top-color: var(--accent3); }
+
+    /* LAB */
+    #lab { background: var(--bg); }
+
+    .lab-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .lab-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--accent2);
+      padding: 1.75rem;
+      transition: all 0.25s;
+    }
+
+    .lab-card:hover {
+      border-left-color: var(--accent);
+      background: var(--bg3);
+    }
+
+    .lab-date {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .lab-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+
+    .lab-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* SKILLS */
+    #skills { background: var(--bg2); }
+
+    .skills-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+
+    .skill-group { margin-bottom: 2.5rem; }
+
+    .skill-group-title {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .skill-group-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .skill-item {
+      margin-bottom: 1rem;
+    }
+
+    .skill-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+    }
+
+    .skill-name {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text);
+    }
+
+    .skill-pct {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .skill-bar {
+      height: 3px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: fillBar 1s ease forwards;
+      animation-delay: var(--delay, 0s);
+    }
+
+    @keyframes fillBar {
+      to { transform: scaleX(1); }
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 0.4rem 0.9rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      transition: all 0.2s;
+    }
+
+    .chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,212,255,0.05);
+    }
+
+    /* SERVICES */
+    #services { background: var(--bg); }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .service-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+
+    .service-card:hover::after { transform: scaleX(1); }
+    .service-card:hover { transform: translateY(-4px); border-color: rgba(0,212,255,0.3); }
+
+    .service-icon {
+      font-size: 1.8rem;
+      margin-bottom: 1.25rem;
+      display: block;
+    }
+
+    .service-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+
+    .service-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    /* ABOUT */
+    #about { background: var(--bg2); }
+
+    .about-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .about-left { position: sticky; top: 8rem; }
+
+    .about-avatar {
+      width: 100%;
+      max-width: 300px;
+      aspect-ratio: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      position: relative;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .about-avatar::before {
+      content: 'R';
+      font-family: var(--font-display);
+      font-size: 8rem;
+      font-weight: 800;
+      color: var(--accent);
+      opacity: 0.15;
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .about-avatar-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      opacity: 0.6;
+    }
+
+    .avatar-corner {
+      position: absolute;
+      width: 20px; height: 20px;
+      border-color: var(--accent);
+      border-style: solid;
+      opacity: 0.6;
+    }
+
+    .avatar-corner.tl { top: 8px; left: 8px; border-width: 1px 0 0 1px; }
+    .avatar-corner.tr { top: 8px; right: 8px; border-width: 1px 1px 0 0; }
+    .avatar-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 1px 1px; }
+    .avatar-corner.br { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
+
+    .about-name {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--white);
+    }
+
+    .about-role {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin: 0.5rem 0 1.5rem;
+    }
+
+    .about-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .about-link {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .about-link:hover { color: var(--accent); }
+
+    .about-text p {
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.95;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-text strong { color: var(--accent); font-weight: 400; }
+
+    .about-text h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin: 2rem 0 1rem;
+    }
+
+    .about-highlight {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--accent2);
+      padding: 1.25rem 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.8;
+      margin-top: 2rem;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 3rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-logo {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--accent);
+    }
+
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* SCROLL ANIMATIONS */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* TERMINAL CURSOR */
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 1.1em;
+      background: var(--accent);
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+      margin-left: 3px;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* TABS JS */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      nav ul { gap: 1.5rem; }
+      section { padding: 5rem 1.5rem; }
+      #home { padding: 7rem 1.5rem 3rem; }
+      .hero-stats { display: none; }
+      .about-layout { grid-template-columns: 1fr; }
+      .about-left { position: static; }
+      .skills-layout { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#home" class="nav-logo">rhiwick<span>.dev</span></a>
+    <ul>
+      <li><a href="#portfolio">Proyectos</a></li>
+      <li><a href="#lab">The Lab</a></li>
+      <li><a href="#skills">Stack</a></li>
+      <li><a href="#services">Servicios</a></li>
+      <li><a href="#about">Acerca</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="home">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+
+    <div class="hero-content">
+      <div class="hero-tag">Disponible para proyectos</div>
+      <h1>
+        Data Scientist
+        <span class="line2">por profesión.</span>
+      </h1>
+      <h1 style="font-size: clamp(1.6rem, 3.5vw, 3rem); color: var(--muted); font-weight: 400; margin-top: 0.5rem;">
+        Maker por vocación<span class="cursor"></span>
+      </h1>
+      <p class="hero-sub">
+        Transformo <strong>datos complejos en decisiones claras</strong> y hardware vintage en soluciones modernas.
+        De los modelos de lenguaje a los circuitos retro — cada problema merece una solución elegante.
+      </p>
+      <div class="hero-ctas">
+        <a href="#portfolio" class="btn btn-primary">Ver proyectos</a>
+        <a href="#services" class="btn btn-ghost">Contratar consultoría</a>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">2+</div>
+        <div class="stat-label">Dominios técnicos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Curiosidad técnica</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">UY</div>
+        <div class="stat-label">Montevideo</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio">
+    <div class="section-header reveal">
+      <div class="section-tag">// 02 — portafolio</div>
+      <h2>Proyectos <span class="accent">destacados</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="portfolio-tabs reveal">
+      <button class="tab-btn active" data-tab="data">Data &amp; AI</button>
+      <button class="tab-btn" data-tab="hardware">Hardware &amp; Retro</button>
+    </div>
+
+    <div id="tab-data" class="tab-panel active">
+      <div class="projects-grid">
+        <div class="project-card reveal" data-type="data">
+          <div class="project-type">▸ Modelado ambiental</div>
+          <div class="project-title">Calidad de Agua — Bahía de Montevideo</div>
+          <p class="project-desc">Modelado predictivo de calidad de agua utilizando datos ambientales y técnicas de Machine Learning para análisis y monitoreo de la Bahía de Montevideo.</p>
+          <div class="project-tags">
+            <span class="tag">Python</span>
+            <span class="tag">ML</span>
+            <span class="tag">Data Analysis</span>
+            <span class="tag">Visualización</span>
+          </div>
+        </div>
+
+        <div class="project-card reveal" data-type="data">
+          <div class="project-type">▸ Riesgo financiero</div>
+          <div class="project-title">Sistema de Detección de Riesgo POS</div>
+          <p class="project-desc">Arquitectura de detección de riesgos en sistemas de punto de venta financiero. Modelos de clasificación para identificar patrones anómalos en transacciones.</p>
+          <div class="project-tags">
+            <span class="tag">Python</span>
+            <span class="tag">Scikit-learn</span>
+            <span class="tag">Anomaly Detection</span>
+            <span class="tag">Docker</span>
+          </div>
+        </div>
+
+        <div class="project-card reveal" data-type="data">
+          <div class="project-type">▸ IA generativa</div>
+          <div class="project-title">Traductor de Documentos Local (LLM)</div>
+          <p class="project-desc">Sistema de traducción de PDFs que corre completamente en local, sin enviar datos a servicios externos. Construido con arquitecturas Transformer y LangChain.</p>
+          <div class="project-tags">
+            <span class="tag">LangChain</span>
+            <span class="tag">Transformers</span>
+            <span class="tag">Docker</span>
+            <span class="tag">PDF</span>
+          </div>
+        </div>
+
+        <div class="project-card reveal" data-type="data">
+          <div class="project-type">▸ RAG / Chatbots</div>
+          <div class="project-title">Pipelines LLM con LangChain</div>
+          <p class="project-desc">Desarrollo de chatbots personalizados con Retrieval-Augmented Generation (RAG) para consulta de documentación técnica y bases de conocimiento privadas.</p>
+          <div class="project-tags">
+            <span class="tag">LangChain</span>
+            <span class="tag">RAG</span>
+            <span class="tag">Vector DB</span>
+            <span class="tag">LLMs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-hardware" class="tab-panel">
+      <div class="projects-grid">
+        <div class="project-card reveal" data-type="hardware">
+          <div class="project-type">▸ Hardware retro</div>
+          <div class="project-title">Traductor de Cartuchos SNES</div>
+          <p class="project-desc">Dispositivo DIY para traducción de cartuchos de Super Nintendo. Proyecto de ingeniería inversa que combina electrónica, programación de bajo nivel y nostalgia.</p>
+          <div class="project-tags">
+            <span class="tag">Electrónica</span>
+            <span class="tag">SNES</span>
+            <span class="tag">Hardware</span>
+            <span class="tag">DIY</span>
+          </div>
+        </div>
+
+        <div class="project-card reveal" data-type="hardware">
+          <div class="project-type">▸ Arduino / CRT</div>
+          <div class="project-title">Controles para Monitor CRT con Arduino</div>
+          <p class="project-desc">Sistema de control personalizado para monitores CRT utilizando Arduino. Automatización de ajustes de imagen para preservar pantallas vintage en perfectas condiciones.</p>
+          <div class="project-tags">
+            <span class="tag">Arduino</span>
+            <span class="tag">CRT</span>
+            <span class="tag">Electrónica</span>
+            <span class="tag">C++</span>
+          </div>
+        </div>
+
+        <div class="project-card reveal" data-type="hardware">
+          <div class="project-type">▸ Arcade repair</div>
+          <div class="project-title">Reparaciones de Máquinas Arcade</div>
+          <p class="project-desc">Restauración y reparación de placas y hardware de máquinas recreativas clásicas. Diagnóstico de fallos electrónicos, sustitución de componentes y puesta en marcha.</p>
+          <div class="project-tags">
+            <span class="tag">Diagnóstico</span>
+            <span class="tag">Soldadura</span>
+            <span class="tag">Electrónica</span>
+            <span class="tag">Restauración</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LAB -->
+  <section id="lab">
+    <div class="section-header reveal">
+      <div class="section-tag">// 03 — the lab</div>
+      <h2>Bitácora de <span class="accent">Experimentos</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="lab-grid">
+      <div class="lab-card reveal">
+        <div class="lab-date">[ en progreso ]</div>
+        <div class="lab-title">Despliegue de modelos locales con Docker</div>
+        <p class="lab-desc">Exploración de arquitecturas para correr LLMs en infraestructura propia sin dependencias de servicios cloud. Optimización de recursos y latencia.</p>
+      </div>
+
+      <div class="lab-card reveal">
+        <div class="lab-date">[ experimento ]</div>
+        <div class="lab-title">Visión Artificial aplicada a hardware retro</div>
+        <p class="lab-desc">Investigando la intersección entre computer vision y diagnóstico de electrónica vintage. Detección automática de componentes dañados en placas.</p>
+      </div>
+
+      <div class="lab-card reveal">
+        <div class="lab-date">[ notas ]</div>
+        <div class="lab-title">Facturación Electrónica en Uruguay (DGI)</div>
+        <p class="lab-desc">Documentación técnica sobre la integración con los sistemas de facturación electrónica de la DGI uruguaya. Asesoría y automatización de procesos.</p>
+      </div>
+
+      <div class="lab-card reveal">
+        <div class="lab-date">[ investigando ]</div>
+        <div class="lab-title">Fine-tuning local con hardware consumer</div>
+        <p class="lab-desc">Experimentando con técnicas de QLORA y PEFT para ajustar modelos de lenguaje con GPUs de consumo doméstico. Sin cloud, sin costos variables.</p>
+      </div>
+
+      <div class="lab-card reveal">
+        <div class="lab-date">[ en progreso ]</div>
+        <div class="lab-title">IA + Automatización de procesos</div>
+        <p class="lab-desc">Explorando la intersección entre modelos de lenguaje y automatización de flujos de trabajo repetitivos en entornos empresariales pequeños.</p>
+      </div>
+
+      <div class="lab-card reveal">
+        <div class="lab-date">[ notas ]</div>
+        <div class="lab-title">Arquitecturas de la SNES — análisis técnico</div>
+        <p class="lab-desc">Desentrañando la arquitectura del procesador Ricoh 5A22 de la SNES. Cómo entender el pasado tecnológico nos hace mejores ingenieros para el futuro.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-header reveal">
+      <div class="section-tag">// 04 — stack técnico</div>
+      <h2>Habilidades &amp; <span class="accent">Tecnologías</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="skills-layout">
+      <div>
+        <div class="skill-group reveal">
+          <div class="skill-group-title">Data & Machine Learning</div>
+
+          <div class="skill-item">
+            <div class="skill-meta">
+              <span class="skill-name">Python</span>
+              <span class="skill-pct">95%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="width:95%; --delay:0.1s"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-meta">
+              <span class="skill-name">Machine Learning (Scikit-learn, XGBoost)</span>
+              <span class="skill-pct">88%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="width:88%; --delay:0.2s"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-meta">
+              <span class="skill-name">LangChain / LLMs / RAG</span>
+              <span class="skill-pct">82%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="width:82%; --delay:0.3s"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-meta">
+              <span class="skill-name">Transformers / NLP</span>
+              <span class="skill-pct">78%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="width:78%; --delay:0.4s"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-meta">
+              <span class="skill-name">Visión Artificial (OpenCV)</span>
+              <span class="skill-pct">70%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="width:70%; --delay:0.5s"></div></div>
+          </div>
+        </div>
+
+        <div class="skill-group reveal">
+          <div class="skill-group-title">Infraestructura & DevOps</div>
+          <div class="chips">
+            <span class="chip">Docker</span>
+            <span class="chip">Git</span>
+            <span class="chip">Linux</span>
+            <span class="chip">PostgreSQL</span>
+            <span class="chip">REST APIs</span>
+            <span class="chip">FastAPI</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-group reveal">
+          <div class="skill-group-title">Hardware & Electrónica</div>
+
+          <div class="skill-item">
+            <div class="skill-meta">
+              <span class="skill-name">Arduino / Microcontroladores</span>
+              <span class="skill-pct">85%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="width:85%; --delay:0.1s"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-meta">
+              <span class="skill-name">Diagnóstico electrónico / Soldadura</span>
+              <span class="skill-pct">80%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="width:80%; --delay:0.2s"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-meta">
+              <span class="skill-name">Hardware retro (SNES, CRT, Arcade)</span>
+              <span class="skill-pct">75%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="width:75%; --delay:0.3s"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-meta">
+              <span class="skill-name">Diseño DIY / Prototipado</span>
+              <span class="skill-pct">78%</span>
+            </div>
+            <div class="skill-bar"><div class="skill-fill" style="width:78%; --delay:0.4s"></div></div>
+          </div>
+        </div>
+
+        <div class="skill-group reveal">
+          <div class="skill-group-title">Herramientas & Entorno</div>
+          <div class="chips">
+            <span class="chip">Jupyter</span>
+            <span class="chip">VS Code</span>
+            <span class="chip">Pandas</span>
+            <span class="chip">NumPy</span>
+            <span class="chip">Matplotlib</span>
+            <span class="chip">HuggingFace</span>
+            <span class="chip">Ollama</span>
+            <span class="chip">C++</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="section-header reveal">
+      <div class="section-tag">// 05 — servicios</div>
+      <h2>Consultoría &amp; <span class="accent">Servicios</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <span class="service-icon">📊</span>
+        <div class="service-title">Análisis y Visualización de Datos</div>
+        <p class="service-desc">Transformo datasets complejos en insights accionables. Dashboards, reportes y modelos predictivos adaptados a tu negocio.</p>
+      </div>
+
+      <div class="service-card reveal">
+        <span class="service-icon">🤖</span>
+        <div class="service-title">Chatbots Personalizados (RAG)</div>
+        <p class="service-desc">Desarrollo de asistentes conversacionales con tu propia documentación. IA local, privada y sin costos variables de API.</p>
+      </div>
+
+      <div class="service-card reveal">
+        <span class="service-icon">🧾</span>
+        <div class="service-title">Facturación Electrónica Uruguay</div>
+        <p class="service-desc">Asesoría e integración técnica con los sistemas DGI para facturación electrónica. Automatización de procesos contables.</p>
+      </div>
+
+      <div class="service-card reveal">
+        <span class="service-icon">⚙️</span>
+        <div class="service-title">Automatización de Procesos</div>
+        <p class="service-desc">Identifico tareas repetitivas y construyo soluciones que ahorran tiempo. Desde scripts simples hasta pipelines completos de datos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-header reveal">
+      <div class="section-tag">// 06 — acerca de mí</div>
+      <h2>Ingeniería, Datos &amp; <span class="accent">Nostalgia</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="about-layout">
+      <div class="about-left reveal">
+        <div class="about-avatar">
+          <div class="avatar-corner tl"></div>
+          <div class="avatar-corner tr"></div>
+          <div class="avatar-corner bl"></div>
+          <div class="avatar-corner br"></div>
+          <div class="about-avatar-inner">
+            [ rhiwick ]
+          </div>
+        </div>
+        <div class="about-name">Rodrigo</div>
+        <div class="about-role">// rhiwick — data scientist & maker</div>
+        <div class="about-links">
+          <a href="https://www.linkedin.com/in/rggmermot" class="about-link" target="_blank">↗ LinkedIn</a>
+          <a href="#" class="about-link">↗ GitHub</a>
+          <a href="#services" class="about-link">↗ Contratar</a>
+        </div>
+      </div>
+
+      <div class="about-text reveal">
+        <p>
+          Mi nombre es Rodrigo, aunque en el mundo digital me conocen como <strong>Rhiwick</strong>. Mi carrera se mueve entre dos mundos: el de los <strong>datos masivos</strong> y el de los <strong>circuitos electrónicos vintage</strong>.
+        </p>
+        <p>
+          Como profesional especializado en <strong>Data Analytics y Machine Learning</strong>, me apasiona transformar la complejidad en claridad. He trabajado en proyectos que van desde el <strong>modelado ambiental de la Bahía de Montevideo</strong> hasta la <strong>detección de riesgos en sistemas financieros</strong>. Mi stack principal incluye Python, Docker y arquitecturas modernas de Transformers, siempre con el objetivo de construir herramientas locales y eficientes.
+        </p>
+        <p>
+          Sin embargo, mi curiosidad no termina en la pantalla. Cuando no estoy optimizando un modelo de lenguaje, probablemente me encuentres con un soldador en la mano, reparando una vieja máquina de arcade o diseñando soluciones DIY para <strong>hardware retro</strong>.
+        </p>
+        <p>
+          Creo firmemente que entender el pasado tecnológico — como la arquitectura de una <strong>SNES</strong> o un monitor <strong>CRT</strong> — nos hace mejores ingenieros para el futuro.
+        </p>
+
+        <h3>¿Qué estoy construyendo ahora?</h3>
+        <p>
+          Actualmente, estoy enfocado en la implementación de <strong>traductores de documentos locales</strong> y explorando la intersección entre la IA y la automatización de procesos.
+        </p>
+
+        <div class="about-highlight">
+          💡 <strong>Filosofía de trabajo:</strong> cada problema de datos es como una placa de arcade dañada — hay que entender el sistema completo antes de diagnosticar el fallo y construir la solución correcta.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">rhiwick.dev</div>
+    <div class="footer-copy">© 2025 Rodrigo (Rhiwick) — Montevideo, Uruguay</div>
+  </footer>
+
+  <script>
+    // TABS
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // SCROLL REVEAL
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, 80 * (Array.from(reveals).indexOf(entry.target) % 4));
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // NAV ACTIVE STATE
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('nav a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 100) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
+      });
+    });
+  </script>
+</body>
+</html>
